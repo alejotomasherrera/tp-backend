@@ -20,11 +20,12 @@ public class GWConfig {
 
     @Bean
     public RouteLocator configurarRutas(RouteLocatorBuilder builder,
-                                        @Value("${apunte-api-gw.url-microservicio-bicicletas}") String uriBicicletas) {
+                                        @Value("${api-gw.url-microservicio-estaciones}") String uriEstaciones,
+                                        @Value("${api-gw.url-microservicio-alquileres}") String uriAlquileres) {
         return builder.routes()
                 // Ruteo al Microservicio de Personas
-                .route(p -> p.path("/alquileres/**").uri(uriBicicletas))
-                .route(p -> p.path("/estaciones/**").uri(uriBicicletas))
+                .route(p -> p.path("/alquileres/**").uri(uriAlquileres))
+                .route(p -> p.path("/estaciones/**").uri(uriEstaciones))
                 .build();
     }
 
@@ -34,7 +35,11 @@ public class GWConfig {
                         .pathMatchers("/alquileres/**")
                         .hasRole("CLIENTE")
 
+                        //Rol administrador
                         .pathMatchers("/estaciones/**")
+                        .hasRole("ADMINISTRADOR")
+
+                        .pathMatchers("/alquileres/**")
                         .hasRole("ADMINISTRADOR")
                 ).oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .csrf(csrf -> csrf.disable());
